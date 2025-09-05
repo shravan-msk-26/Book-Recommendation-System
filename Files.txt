@@ -1,0 +1,58 @@
+import numpy as np 
+import pandas as pd 
+books = pd.read_csv('books.csv') 
+users = pd.read_csv('users.csv') 
+ratings = pd.read_csv('ratings.csv') 
+users.head() 
+ratings.head() 
+users.isnull().sum() 
+books.isnull().sum() 
+ratings_with_name = ratings.merge(books,on='ISBN') 
+num_rating_df = ratings_with_name.groupby('Book-Title').count()['Book
+Rating'].reset_index() 
+num_rating_df.rename(columns={'Book-Rating':'num_ratings'},inplace=True) 
+num_rating_df 
+avg_rating_df = ratings_with_name.groupby('Book-Title').mean()['Book
+Rating'].reset_index() 
+avg_rating_df.rename(columns={'Book-Rating':'avg_rating'},inplace=True) 
+avg_rating_df 
+popular_df = num_rating_df.merge(avg_rating_df,on='Book-Title') 
+popular_df 
+popular_df = 
+popular_df[popular_df['num_ratings']>=250].sort_values('avg_rating',ascending=False).head(50) 
+popular_df = popular_df.merge(books,on='Book-Title').drop_duplicates('Book
+Title')[['Book-Title','Book-Author','Image-URL-M','num_ratings','avg_rating']] 
+popular_df['Image-URL-M'][0] 
+x = ratings_with_name.groupby('User-ID').count()['Book-Rating'] > 200 
+padhe_likhe_users = x[x].index 
+filtered_rating = ratings_with_name[ratings_with_name['User
+ID'].isin(padhe_likhe_users)] 
+y = filtered_rating.groupby('Book-Title').count()['Book-Rating']>=50 
+famous_books = y[y].index 
+final_ratings = filtered_rating[filtered_rating['Book-Title'].isin(famous_books)] 
+pt = final_ratings.pivot_table(index='Book-Title',columns='User-ID',values='Book
+Rating') 
+pt.fillna(0,inplace=True) 
+pt 
+from sklearn.metrics.pairwise import cosine_similarity 
+similarity_scores = cosine_similarity(pt) 
+similarity_scores.shape 
+def recommend(book_name): 
+  return suggestions 
+for i in similar_items: 
+  print(i[0]) 
+np.where(pt.index=='Zoya')[0][0] 
+#we can find the index of the book by changing title 
+sorted(list(enumerate(similarity_scores[0])),key=lambda 
+x:x[1],reverse=True)[1:6] 
+#it returns top 5 similarity scores for index value 0 
+similar_items = sorted(list(enumerate(similarity_scores[0])),key=lambda 
+x:x[1],reverse=True)[1:6] 
+def recommend(book_name): 
+index = np.where(pt.index==book_name)[0][0] 
+similar_items = sorted(list(enumerate(similarity_scores[index])),key=lambda 
+x:x[1],reverse=True)[1:6] 
+for i in similar_items: 
+    print(pt.index[i[0]]) 
+pt.index[485] 
+
